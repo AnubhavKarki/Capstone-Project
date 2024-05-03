@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 import joblib
 import matplotlib.dates as mdates
 
-# Setting the title
+# Setting the titlex
 st.title("Netflix Stock Price Prediction")
 
 # Disabling warning:
@@ -40,8 +40,8 @@ def main():
     # Input form
     st.sidebar.subheader("Enter the required parameters:")
     # Example input fields
-    open_value = st.sidebar.slider('Open', min_value=df['Open'].min(), max_value=df['Open'].max(), value=df['Open'].mean())
-    high_value = st.sidebar.slider('High', min_value=df['High'].min(), max_value=df['High'].max(), value=df['High'].mean())
+    open_value = st.sidebar.slider('Open', min_value=float(df['Open'].min()), max_value=float(df['Open'].max()), value=float(df['Open'].mean()))
+    high_value = st.sidebar.slider('High', min_value=float(df['High'].min()), max_value=float(df['High'].max()), value=float(df['High'].mean()))
 
     # Predict button
     if st.sidebar.button('Predict'):
@@ -50,25 +50,27 @@ def main():
         
         # Display prediction
         st.subheader("Predicted Stock Closing Price:")
-        st.write(prediction)
+        st.write("### Predicted Stock Closing Price:", prediction)
+
+
+
         
         # Plot the predicted stock prices
-
         plot_stock_trend(prediction, df)
 
 # Function to make predictions
 def predict_stock_price(open_value, high_value):
     # Make predictions
     prediction = model.predict(np.array([[open_value, high_value]]))
+    prediction = round(prediction[0], 2)
     return prediction
 
-# Function to plot the predicted stock prices
-
-# Function to plot the trend of the last 300 samples
 def plot_stock_trend(prediction, data):
     # Convert date column to datetime
-    data = data.iloc[-300:]
     data['Date'] = pd.to_datetime(data['Date'])
+    
+    # Select the last 300 samples of data
+    data = data.iloc[-300:]
     
     # Extract dates and actual close prices
     dates = data['Date']
@@ -86,7 +88,7 @@ def plot_stock_trend(prediction, data):
     # Set labels and title
     ax.set_xlabel('Date')
     ax.set_ylabel('Close Price')
-    ax.set_title('Actual vs Predicted Stock Prices (Last 500 Samples)')
+    ax.set_title('Actual vs Predicted Stock Prices')
     
     # Set x-axis tick frequency to monthly intervals
     ax.xaxis.set_major_locator(mdates.MonthLocator())
